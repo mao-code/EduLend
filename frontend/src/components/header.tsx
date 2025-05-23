@@ -1,12 +1,16 @@
 'use client'
 import { Button } from "./ui/button";
-import { AccountType } from "@/lib/metamask";
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import { ethers } from "ethers";
 import Link from "next/link"
+import { useAccountStore } from "@/providers/account-store-provider";
+import { useShallow } from "zustand/shallow";
 
 export default function Header() {
-    const [accountData, setAccountData] = useState<AccountType | null>(null);
+    const { accountData, setAccountData } = useAccountStore(useShallow((state) => ({
+        accountData: state.account,
+        setAccountData: state.setAccount,
+    })));
 
     const _connectToMetaMask= useCallback(async () => {
         const ethereum = window.ethereum;
@@ -36,13 +40,13 @@ export default function Header() {
             } catch (error: Error | any) {
                 alert(`Error connecting to MetaMask: ${error?.message ?? error}`);
             }
-            } else {
+        } else {
             alert("MetaMask not installed");
         }
-    }, []);
+    }, [setAccountData]);
 
     return (
-        <header className="sticky top-0 z-50 py-4 px-6 flex items-center justify-between">
+        <header className="sticky top-0 z-50 py-4 px-6 flex items-center justify-between bg-slate-200">
           <Link href="/">
             <h1 className="text-2xl font-bold">EduLend</h1>
           </Link>
