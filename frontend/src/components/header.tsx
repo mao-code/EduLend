@@ -3,6 +3,7 @@ import { Button } from "./ui/button";
 import { AccountType } from "@/lib/metamask";
 import { useState, useCallback } from "react";
 import { ethers } from "ethers";
+import Link from "next/link"
 
 export default function Header() {
     const [accountData, setAccountData] = useState<AccountType | null>(null);
@@ -41,8 +42,10 @@ export default function Header() {
     }, []);
 
     return (
-        <header className="sticky top-0 z-50 py-4 flex items-center justify-around">
-          <h1 className="text-2xl font-bold">EduLend</h1>
+        <header className="sticky top-0 z-50 py-4 px-6 flex items-center justify-between">
+          <Link href="/">
+            <h1 className="text-2xl font-bold">EduLend</h1>
+          </Link>
           <div className="flex items-center gap-2">
             <Button onClick={_connectToMetaMask}>{ !accountData?.address ? 'Connect MetaMask' : 'Connected'}</Button>
             : {accountData?.address}
