@@ -1,0 +1,1 @@
+export type FuncButtonType = "deposit" | "borrow" | "repay" | "redeem";
