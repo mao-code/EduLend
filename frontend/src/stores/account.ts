@@ -1,4 +1,5 @@
 import { createStore } from "zustand/vanilla";
+import { persist, createJSONStorage } from "zustand/middleware";
 import { AccountType } from "@/lib/metamask";
 
 export type AccountState = {
@@ -32,10 +33,21 @@ export const defaultAccountState: AccountState = {
 }
 
 export const createAccountStore = (initState: AccountState = defaultAccountState) => {
-    return createStore<AccountStore>()((set) => ({
-        ...initState,
-        setAccount: (account: AccountType) => {
-            set(() => ({ account: account }))
-        }
-    }))
+    return createStore<AccountStore>()(
+        persist(
+            (set) => (
+                {
+                    ...initState,
+                    setAccount: (account: AccountType) => {
+                        set(() => ({ account: account }))
+                    }
+                }
+            ), 
+            {
+                name: 'account-store', // localStorage key
+                partialize: (state) => ({ account: state.account }), // 可選，只儲存 account
+                storage: createJSONStorage(() => sessionStorage)
+            }
+        )
+    );
 }
