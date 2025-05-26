@@ -4,58 +4,59 @@ pragma solidity ^0.8.17;
 import "openzeppelin-contracts/contracts/token/ERC20/ERC20.sol";
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
 
-/// @notice 
+/// @title EduToken - 支援價格跌破清算線的非線性價格模型 (x * y = k)
 contract EduToken is ERC20, Ownable {
-    uint256 public immutable P0; //初始價格
-    uint256 public immutable k; //斜率
+    uint256 public reserveETH; // 儲備 ETH
+    uint256 public reserveEDU; // 儲備 EDU（僅用於計價，不代表實際 ERC20 數量）
 
-    event Bought(address indexed user, uint256 amount, uint256 cost);
-    event Sold(address indexed user, uint256 amount, uint256 revenue);
+    event Bought(address indexed buyer, uint256 amount, uint256 cost);
+    event Sold(address indexed seller, uint256 amount, uint256 revenue);
 
-    constructor(
-        string memory name_,
-        string memory symbol_,
-        uint256 initialSupply,
-        uint256 _P0,
-        uint256 _k
-    ) ERC20(name_, symbol_) {
-        P0 = _P0;
-        k  = _k;
-        _mint(msg.sender, initialSupply);
+    constructor() ERC20("EduToken", "EDU") Ownable(msg.sender) {
+        reserveETH = 1 ether;       // 初始化儲備 ETH（流動性池）
+        reserveEDU = 1000 ether;    // 初始化儲備 EDU（價格初始為 1 ETH / 1000 EDU = 0.001 ETH）
+        _mint(msg.sender, 1000 ether); // 初始發行給抵押者（模擬抵押行為）
     }
 
+    /// @notice 取得當前 EDU 價格（ETH / EDU），即 reserveETH / reserveEDU
     function currentPrice() public view returns (uint256) {
-        return P0 + k * totalSupply();
+        require(reserveEDU > 0, "No supply");
+        return (reserveETH * 1e18) / reserveEDU;
     }
 
-    function buy(uint256 amount) external payable {
-        uint256 S0 = totalSupply();
-        uint256 S1 = S0 + amount;
-        uint256 costP0 = P0 * amount;
-        uint256 costK  = k * ((S1*S1 - S0*S0) / 2);
-        uint256 cost   = costP0 + costK;
-        require(msg.value >= cost, "Insufficient ETH");
+    /// @notice 買入 EDU，支付 ETH，根據 Uniswap v2 定價公式
+    function buy(uint256 eduAmountOut) external payable {
+        require(eduAmountOut > 0, "Cannot buy 0");
 
-        _mint(msg.sender, amount);
-        if (msg.value > cost) payable(msg.sender).transfer(msg.value - cost);
-        emit Bought(msg.sender, amount, cost);
+        // Uniswap v2 常見公式：Δx = (x * Δy) / (y - Δy)
+        uint256 ethRequired = (reserveETH * eduAmountOut) / (reserveEDU - eduAmountOut);
+        require(msg.value >= ethRequired, "Insufficient ETH sent");
+
+        reserveETH += ethRequired;
+        reserveEDU -= eduAmountOut;
+        _mint(msg.sender, eduAmountOut);
+
+        // 退款
+        if (msg.value > ethRequired) {
+            payable(msg.sender).transfer(msg.value - ethRequired);
+        }
+
+        emit Bought(msg.sender, eduAmountOut, ethRequired);
     }
 
-    function sell(uint256 amount) external {
-        uint256 S0 = totalSupply();
-        require(S0 >= amount, "Not enough supply");
-        uint256 S1 = S0 - amount;
-        uint256 revP0 = P0 * amount;
-        uint256 revK  = k * ((S0*S0 - S1*S1) / 2);
-        uint256 revenue = revP0 + revK;
+    /// @notice 賣出 EDU，換回 ETH，根據 Uniswap v2 定價公式
+    function sell(uint256 eduAmountIn) external {
+        require(balanceOf(msg.sender) >= eduAmountIn, "Insufficient EDU");
 
-        _burn(msg.sender, amount);
-        payable(msg.sender).transfer(revenue);
-        emit Sold(msg.sender, amount, revenue);
-    }
+        uint256 ethOut = (reserveETH * eduAmountIn) / (reserveEDU + eduAmountIn);
+        require(ethOut <= reserveETH, "Not enough ETH in pool");
 
-    function mint(address to, uint256 amt) external onlyOwner {
-        _mint(to, amt);
+        _burn(msg.sender, eduAmountIn);
+        reserveEDU += eduAmountIn;
+        reserveETH -= ethOut;
+        payable(msg.sender).transfer(ethOut);
+
+        emit Sold(msg.sender, eduAmountIn, ethOut);
     }
 
     receive() external payable {}
