@@ -17,11 +17,8 @@ contract DeployScript is Script {
         // Deploy MockStablecoin
         MockStablecoin mockStablecoin = new MockStablecoin();
 
-        // Deploy PriceOracle with initial price from EduToken
-        // The price will be updated based on actual trading activities
-        uint256[] memory initialPrice = new uint256[](1);
-        initialPrice[0] = eduToken.currentPrice();
-        PriceOracle priceOracle = new PriceOracle(initialPrice);
+        // Deploy PriceOracle (prices are defined in the contract)
+        PriceOracle priceOracle = new PriceOracle();
 
         // Mint initial MockUSDT for testing
         mockStablecoin.mint(msg.sender, 1000000 ether); // 1M MockUSDT

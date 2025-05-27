@@ -13,7 +13,13 @@ contract Simulate is Script {
         // 初始化 EduToken（1 ETH : 1000 EDU 初始儲備）
         EduToken edu = new EduToken();
 
-        int256[5] memory netChanges = [int256(0), -100, -150, -200, -250];
+        int256[5] memory netChanges = [
+            int256(210 ether),    // Day 1：賣出 210 EDU
+            int256(-19 ether),    // Day 2：買回 19 EDU
+            int256(229 ether),    // Day 3：賣出 230 EDU
+            int256(-39 ether),    // Day 4：買回 40 EDU
+            int256(249 ether)     // Day 5：賣出 250 EDU
+        ];
         uint256 initPrice = edu.currentPrice();
         uint256 liquidationThreshold = (initPrice * 80) / 100;
 
