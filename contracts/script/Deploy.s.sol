@@ -1,18 +1,27 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.17;
 
-import {Script, console} from "forge-std/Script.sol";
-import {Counter} from "../src/Counter.sol";
+import "forge-std/Script.sol";
+import "../src/EduToken.sol";
+import "../src/MockStablecoin.sol";
+import "../src/PriceOracle.sol";
 
-contract CounterScript is Script {
-    Counter public counter;
+contract DeployScript is Script {
+    function run() external {
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        vm.startBroadcast(deployerPrivateKey);
 
-    function setUp() public {}
+        // Deploy EduToken
+        EduToken eduToken = new EduToken();
 
-    function run() public {
-        vm.startBroadcast();
+        // Deploy MockStablecoin
+        MockStablecoin mockStablecoin = new MockStablecoin();
 
-        counter = new Counter();
+        // Deploy PriceOracle (prices are defined in the contract)
+        PriceOracle priceOracle = new PriceOracle();
+
+        // Mint initial MockUSDT for testing
+        mockStablecoin.mint(msg.sender, 1000000 ether); // 1M MockUSDT
 
         vm.stopBroadcast();
     }
