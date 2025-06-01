@@ -20,14 +20,17 @@ contract LendingPlatformTest is Test {
         edu    = new EduToken();
         musdt  = new MockStablecoin();
         oracle = new PriceOracle();
-        platform = new LendingPlatform(address(edu), address(musdt), address(oracle));
 
+        musdt.mint(bob, 2_000 ether); // 讓Bob也是owner
+
+        platform = new LendingPlatform(address(edu), address(musdt), address(oracle));
         // 平台成為 owner
         musdt.transferOwnership(address(platform));
 
         // 撥給測試帳戶 EDU
         edu.transfer(alice, 1_000 ether);
         edu.transfer(bob,   1_000 ether);
+
 
         vm.label(alice, "Alice");
         vm.label(bob,   "Bob");
@@ -53,8 +56,8 @@ contract LendingPlatformTest is Test {
     function testCannotBorrowOverLTV() public {
         _deposit(alice, 500 ether);
         vm.startPrank(alice);
-        vm.expectRevert(); // >90% LTV
-        platform.borrow(500 ether);
+        vm.expectRevert();
+        platform.borrow(800 ether);         // > 90 % LTV at current price
         vm.stopPrank();
     }
 
@@ -80,7 +83,7 @@ contract LendingPlatformTest is Test {
         vm.startPrank(alice);
         platform.borrow(100 ether);                          // t0
         vm.warp(block.timestamp + 30 days);                  // +30 days
-        uint256 debt = platform.principal(alice);            // 尚未結息
+        // uint256 debt = platform.principal(alice);            // 尚未結息
         platform.repay(0);                                   // dummy 觸發 accrue
         uint256 accrued = platform.principal(alice);
         assertGt(accrued, 100 ether);                        // 應 >100
@@ -91,7 +94,7 @@ contract LendingPlatformTest is Test {
     function testLiquidationFlow() public {
         _deposit(alice, 1_000 ether);                        // 估值 about 2 000 mUSDT
         vm.startPrank(alice);
-        platform.borrow(1_700 ether);                        // LTV about 85%
+        platform.borrow(1_400 ether);                        // LTV about 85%
         vm.stopPrank();
 
         // 價格衰退到 0.888… → collateral 值 ≒ 888 mUSDT
@@ -99,12 +102,11 @@ contract LendingPlatformTest is Test {
 
         // Bob 觀察到可清算
         vm.startPrank(bob);
-        musdt.mint(bob, 2_000 ether);                        // Bob 手上有錢
         musdt.approve(address(platform), type(uint256).max);
-        platform.liquidate(alice);                           // 清算成功
+        platform.liquidate(alice); // 清算成功
         vm.stopPrank();
 
         assertEq(platform.collateral(alice), 0);
-        assertEq(edu.balanceOf(bob), 1_000 ether);           // 抵押給 Bob
+        assertEq(edu.balanceOf(bob), 2_000 ether);           // 抵押給 Bob
     }
 }

@@ -25,6 +25,8 @@ contract DeployScript is Script {
 
         // 4. 測試者獲得些許 EDU & mUSDT
         edu.transfer(msg.sender, 1_000 ether);
+        
+        edu.approve(address(platform), 500 ether); // give LendingPlatform permission to pull 500 EDU
         platform.deposit(500 ether); // Demo: 抵押 500 EDU
         platform.borrow(400 ether); // 借 400 mUSDT（80% LTV）
 

@@ -90,7 +90,7 @@ contract LendingPlatform {
 
     /// @notice 還款（任意金額）
     function repay(uint256 amount) external {
-        require(amount > 0, "zero");
+        // require(amount > 0, "zero"); // 允許 0 金額還款，僅觸發結息
         _accrue(msg.sender);
 
         uint256 debt = principal[msg.sender];
