@@ -17,7 +17,7 @@ contract EduToken is ERC20, Ownable {
     constructor() ERC20("EduToken", "EDU") Ownable(msg.sender) {
         reserveETH = 1 ether;       // 初始化儲備 ETH（流動性池）
         reserveEDU = 1000 ether;    // 初始化儲備 EDU（EDU 價格初始為 1 ETH / 1000 EDU = 0.001 ETH）
-        _mint(msg.sender, 1000 ether); // 初始發行給抵押者（模擬抵押行為）
+        _mint(msg.sender, 10000 ether); // 初始發行給抵押者（模擬抵押行為）
         ethToMusdt = 2000e18;       // 預設匯率：1 ETH = 2000 mUSDT
     }
 
