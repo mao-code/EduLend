@@ -11,13 +11,13 @@ export default function BalanceSection() {
     const btnList: FuncButtonType[] = ["deposit", "borrow", "repay", "redeem"];
 
     return (
-        <div className="flex flex-col grow gap-12 w-full items-center justify-center">
+        <section id="balance-section" className="flex flex-col grow gap-12 w-full items-center justify-center">
             <h1 className="text-4xl font-bold">Balance: {balance}</h1>
             <div className="flex gap-8">
                 {btnList.map((btn) => (
                     <FuncButton key={btn} type={btn} />
                 ))}
             </div>
-        </div>
+        </section>
     );
 }

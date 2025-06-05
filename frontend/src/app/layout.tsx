@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import 'driver.js/dist/driver.css';
 
 import Header from "@/components/header";
 import { AccountStoreProvider } from "@/providers/account-store-provider";

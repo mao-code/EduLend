@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { Button } from "@/components/ui/button";
 import type { FuncButtonType } from "./utils";
 import { ChevronRight } from "lucide-react";
@@ -8,31 +8,36 @@ interface FuncButtonProps {
 }
 
 export default function FuncButton({ type }: FuncButtonProps) {
-    const handleClick = () => {
-        // Handle button click based on the type
-        switch (type) {
+  const handleClick = async () => {
+    try {
+      // Handle button click based on the type
+      switch (type) {
         case "deposit":
-            console.log("Deposit button clicked");
-            break;
+          console.log("Deposit button clicked");
+          break;
         case "borrow":
-            console.log("Borrow button clicked");
-            break;
+          console.log("Borrow button clicked");
+          break;
         case "repay":
-            console.log("Repay button clicked");
-            break;
+          console.log("Repay button clicked");
+          break;
         case "redeem":
-            console.log("Redeem button clicked");
-            break;
+          console.log("Redeem button clicked");
+          break;
         default:
-            console.error("Unknown button type");
-        }
-    };
+          console.error("Unknown button type");
+      }
+    } catch (error) {
+      console.error("Error initializing Web3 or contract instance:", error);
+    }
+  };
 
   return (
-    <div className="flex flex-col gap-1 items-center">
-        <Button size="icon" onClick={handleClick}>{<ChevronRight />}</Button>
-        <p>{type}</p>
+    <div id={`${type}-button`} className="flex flex-col gap-1 items-center">
+      <Button size="icon" onClick={handleClick}>
+        {<ChevronRight />}
+      </Button>
+      <p>{type}</p>
     </div>
   );
-
 }
