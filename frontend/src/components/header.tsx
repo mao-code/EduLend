@@ -1,10 +1,11 @@
 'use client'
 import { Button } from "./ui/button";
 import { useCallback } from "react";
-import { ethers } from "ethers";
 import Link from "next/link"
 import { useAccountStore } from "@/providers/account-store-provider";
 import { useShallow } from "zustand/shallow";
+import Web3 from "web3";
+import { eduTokenContractABI } from "@/lib/backend";
 
 export default function Header() {
     const { accountData, setAccountData } = useAccountStore(useShallow((state) => ({
@@ -17,23 +18,19 @@ export default function Header() {
 
         if (typeof ethereum !== "undefined") {
             try {
+                const web3 = new Web3(ethereum);
                 const accounts = await ethereum.request({
                     method: "eth_requestAccounts",
                 }) as string[];
 
+                const eduTokenContract = new web3.eth.Contract(eduTokenContractABI, "0x5FbDB2315678afecb367f032d93F642f64180aa3");
+
                 const address = accounts[0];
-                const provider = new ethers.BrowserProvider(ethereum);
-                // Get the account balance
-                const balance = await provider.getBalance(address);
-                // Get the network ID from MetaMask
-                const network = await provider.getNetwork();
+                
                 // Update state with the results
                 setAccountData({
                     address,
-                    balance: ethers.formatEther(balance),
-                    // The chainId property is a bigint, change to a string
-                    chainId: network.chainId.toString(),
-                    network: network.name,
+                    balance: web3.utils.fromWei(await eduTokenContract.methods.balanceOf(accounts[0]).call(), "ether"), // Convert balance from wei to ether
                 });
                 console.log("connected to MetaMask with address: ", address);
             // eslint-disable-next-line @typescript-eslint/no-explicit-any

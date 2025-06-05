@@ -12,7 +12,7 @@ export default function BalanceSection() {
 
     return (
         <section id="balance-section" className="flex flex-col grow gap-12 w-full items-center justify-center">
-            <h1 className="text-4xl font-bold">Balance: {balance}</h1>
+            <h1 className="text-4xl font-bold">Balance: {balance} EDU</h1>
             <div className="flex gap-8">
                 {btnList.map((btn) => (
                     <FuncButton key={btn} type={btn} />
