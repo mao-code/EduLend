@@ -14,7 +14,9 @@ console.log("Contract ABI loaded successfully");
 const deployment = await import('/Users/hsing/EduLend/contracts/broadcast/Deploy.s.sol/31337/run-latest.json', {
   with: { type: 'json' }
 });
-const address = deployment.default.transactions[0].contractAddress;
+const address = deployment.default.transactions.find(
+  tx => tx.contractName === 'LendingPlatform'
+).contractAddress;
 console.log("Contract address:", address);
 
 fs.writeFileSync(
