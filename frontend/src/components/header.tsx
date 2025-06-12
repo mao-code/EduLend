@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useAccountStore } from "@/providers/account-store-provider";
 import { useShallow } from "zustand/shallow";
 import Web3 from "web3";
-import { eduTokenContractABI } from "@/lib/backend";
+import { lendingPlatformContractABI, lendingPlatformContractAddr } from "@/lib/web3";
 
 export default function Header() {
     const { accountData, setAccountData } = useAccountStore(useShallow((state) => ({
@@ -23,14 +23,16 @@ export default function Header() {
                     method: "eth_requestAccounts",
                 }) as string[];
 
-                const eduTokenContract = new web3.eth.Contract(eduTokenContractABI, "0x5FbDB2315678afecb367f032d93F642f64180aa3");
+                const lendingPlatformContract = new web3.eth.Contract(lendingPlatformContractABI, lendingPlatformContractAddr.address);
+                // const eduTokenContract = new web3.eth.Contract(eduTokenContractABI, "0x5FbDB2315678afecb367f032d93F642f64180aa3");
 
                 const address = accounts[0];
                 
                 // Update state with the results
                 setAccountData({
                     address,
-                    balance: web3.utils.fromWei(await eduTokenContract.methods.balanceOf(accounts[0]).call(), "ether"), // Convert balance from wei to ether
+                    eduBalance: web3.utils.fromWei(await lendingPlatformContract.methods.collateral(accounts[0]).call(), "ether"), // Convert balance from wei to ether
+                    // mUSDTBalance: web3.utils.fromWei(await eduTokenContract.methods.currentPriceInMusdt(accounts[0]).call(), "ether"), // Placeholder, update with actual logic if needed
                 });
                 console.log("connected to MetaMask with address: ", address);
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
