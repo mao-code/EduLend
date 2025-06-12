@@ -19,8 +19,7 @@ import Web3 from "web3";
 import {
   lendingPlatformContractABI,
   lendingPlatformContractAddr,
-  eduTokenContractABI,
-} from "@/lib/backend";
+} from "@/lib/web3";
 
 interface FuncButtonProps {
   type: FuncButtonType;
@@ -45,17 +44,6 @@ export default function FuncButton({ type }: FuncButtonProps) {
         lendingPlatformContractABI,
         lendingPlatformContractAddr.address,
       );
-      const eduInstance = new web3.eth.Contract(
-        eduTokenContractABI,
-        "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      );
-
-      await eduInstance.methods
-        .approve(
-          lendingPlatformContractAddr.address,
-          web3.utils.toWei("500", "ether"),
-        )
-        .send({ from: accounts[0] });
 
       // Handle button click based on the type
       const parsedAmount = web3.utils.toWei(amount, "ether");
@@ -117,42 +105,45 @@ export default function FuncButton({ type }: FuncButtonProps) {
   };
 
   return (
-    <div id={`${type}-button`} className="flex flex-col gap-1 items-center">
-      <Dialog>
-        <form>
-          <DialogTrigger asChild>
+    <Dialog>
+      <form>
+        <DialogTrigger asChild>
+          <div
+            id={`${type}-button`}
+            className="flex flex-col items-center gap-2 cursor-pointer"
+          >
             <Button size="icon">
               <ChevronRight />
             </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>{type}</DialogTitle>
-              <DialogDescription>
-                Enter the amount you want to {type} in the form below.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-3">
-              <Label htmlFor="amount">Amount</Label>
-              <Input
-                id="amount"
-                name="amount"
-                defaultValue="0"
-                onChange={(e) => setAmount(e.target.value)}
-              />
-            </div>
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline">Cancel</Button>
-              </DialogClose>
-              <Button type="submit" onClick={handleClick}>
-                Save changes
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </form>
-      </Dialog>
-      <p>{type}</p>
-    </div>
+            <p>{type}</p>
+          </div>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>{type}</DialogTitle>
+            <DialogDescription>
+              Enter the amount you want to {type} in the form below.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-3">
+            <Label htmlFor="amount">Amount</Label>
+            <Input
+              id="amount"
+              name="amount"
+              defaultValue="0"
+              onChange={(e) => setAmount(e.target.value)}
+            />
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="outline">Cancel</Button>
+            </DialogClose>
+            <Button type="submit" onClick={handleClick}>
+              Save changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </form>
+    </Dialog>
   );
 }
