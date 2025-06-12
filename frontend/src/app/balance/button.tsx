@@ -19,17 +19,24 @@ import Web3 from "web3";
 import {
   lendingPlatformContractABI,
   lendingPlatformContractAddr,
+  eduTokenContractABI
 } from "@/lib/web3";
+import { useAccountStore } from "@/providers/account-store-provider";
+import { useShallow } from "zustand/shallow";
 
 interface FuncButtonProps {
   type: FuncButtonType;
 }
 
 export default function FuncButton({ type }: FuncButtonProps) {
+  const { eduBalance } = useAccountStore(useShallow((state) => ({
+          eduBalance: state.account.eduBalance,
+  })));
   const [amount, setAmount] = useState<string>("0");
 
-  const handleClick = async () => {
+  const handleClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     try {
+      e.preventDefault();
       if (!window.ethereum) {
         throw new Error(
           "Ethereum provider not found. Please install MetaMask or another Ethereum wallet.",
@@ -40,17 +47,31 @@ export default function FuncButton({ type }: FuncButtonProps) {
       });
       const web3 = new Web3(window.ethereum);
 
-      const instance = new web3.eth.Contract(
+      const lendingPlatformContract = new web3.eth.Contract(
         lendingPlatformContractABI,
         lendingPlatformContractAddr.address,
       );
+      const eduTokenContract = new web3.eth.Contract(
+        eduTokenContractABI,
+        "0x5FbDB2315678afecb367f032d93F642f64180aa3", // Replace with actual EDU token contract address
+      );
+
+      await eduTokenContract.methods
+        .approve(lendingPlatformContractAddr.address, web3.utils.toWei(amount, "ether"))
+        .send({ from: accounts[0] })
+        .then((receipt) => {
+          console.log("Approval successful:", receipt);
+        })
+        .catch((error) => {
+          console.error("Approval failed:", error);
+        });
 
       // Handle button click based on the type
       const parsedAmount = web3.utils.toWei(amount, "ether");
       switch (type) {
         case "deposit":
           console.log("Deposit button clicked");
-          instance.methods
+          lendingPlatformContract.methods
             .deposit(parsedAmount)
             .send({ from: accounts[0] })
             .then((receipt) => {
@@ -62,7 +83,7 @@ export default function FuncButton({ type }: FuncButtonProps) {
           break;
         case "borrow":
           console.log("Borrow button clicked");
-          instance.methods
+          lendingPlatformContract.methods
             .borrow(parsedAmount)
             .send({ from: accounts[0] })
             .then((receipt) => {
@@ -74,7 +95,7 @@ export default function FuncButton({ type }: FuncButtonProps) {
           break;
         case "repay":
           console.log("Repay button clicked");
-          instance.methods
+          lendingPlatformContract.methods
             .repay(parsedAmount)
             .send({ from: accounts[0] })
             .then((receipt) => {
@@ -86,7 +107,7 @@ export default function FuncButton({ type }: FuncButtonProps) {
           break;
         case "redeem":
           console.log("Redeem button clicked");
-          instance.methods
+          lendingPlatformContract.methods
             .redeem(parsedAmount)
             .send({ from: accounts[0] })
             .then((receipt) => {
@@ -112,9 +133,9 @@ export default function FuncButton({ type }: FuncButtonProps) {
             id={`${type}-button`}
             className="flex flex-col items-center gap-2 cursor-pointer"
           >
-            <Button size="icon">
-              <ChevronRight />
-            </Button>
+            <div className="flex items-center justify-center w-12 h-12 bg-slate-300 rounded-full">
+              <ChevronRight className="w-6 h-6" />
+            </div>
             <p>{type}</p>
           </div>
         </DialogTrigger>
@@ -122,7 +143,7 @@ export default function FuncButton({ type }: FuncButtonProps) {
           <DialogHeader>
             <DialogTitle>{type}</DialogTitle>
             <DialogDescription>
-              Enter the amount you want to {type} in the form below.
+              Enter the amount you want to {type} in the form below.<br />(balance: {eduBalance} EDU)
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-3">
@@ -138,7 +159,7 @@ export default function FuncButton({ type }: FuncButtonProps) {
             <DialogClose asChild>
               <Button variant="outline">Cancel</Button>
             </DialogClose>
-            <Button type="submit" onClick={handleClick}>
+            <Button onClick={(e) => handleClick(e)}>
               Save changes
             </Button>
           </DialogFooter>
