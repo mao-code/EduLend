@@ -14,10 +14,10 @@ console.log("Contract ABI loaded successfully");
 const deployment = await import('/Users/hsing/EduLend/contracts/broadcast/Deploy.s.sol/31337/run-latest.json', {
   with: { type: 'json' }
 });
-const address = deployment.default.transactions.find(
+const lendingPlatformAddress = deployment.default.transactions.find(
   tx => tx.contractName === 'LendingPlatform'
 ).contractAddress;
-console.log("Contract address:", address);
+console.log("Contract address:", lendingPlatformAddress);
 
 fs.writeFileSync(
   path.join(__dirname, './src/abi/LendingPlatform-abi.json'),
@@ -26,7 +26,7 @@ fs.writeFileSync(
 
 fs.writeFileSync(
   path.join(__dirname, './src/abi/LendingPlatform-addr.json'),
-  JSON.stringify({ address }, null, 2)
+  JSON.stringify({ address: lendingPlatformAddress }, null, 2)
 );
 
 const EduTokenJson = await import('/Users/hsing/EduLend/contracts/out/EduToken.sol/EduToken.json', {
@@ -38,4 +38,23 @@ console.log("Contract ABI loaded successfully");
 fs.writeFileSync(
   path.join(__dirname, './src/abi/EduToken-abi.json'),
   JSON.stringify(eduTokenAbi, null, 2)
+);
+
+const PriceOracleJson = await import('/Users/hsing/EduLend/contracts/out/PriceOracle.sol/PriceOracle.json', {
+  with: { type: 'json' }
+});
+const priceOracleAbi = PriceOracleJson.default.abi;
+console.log("Contract ABI loaded successfully");
+
+const priceOracleAddress = deployment.default.transactions.find(
+  tx => tx.contractName === 'PriceOracle'
+).contractAddress;
+
+fs.writeFileSync(
+  path.join(__dirname, './src/abi/PriceOracle-abi.json'),
+  JSON.stringify(priceOracleAbi, null, 2)
+);
+fs.writeFileSync(
+  path.join(__dirname, './src/abi/PriceOracle-addr.json'),
+  JSON.stringify({ address: priceOracleAddress }, null, 2)
 );
