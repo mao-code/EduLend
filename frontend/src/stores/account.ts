@@ -16,9 +16,8 @@ export const initAccountStore = (): AccountState => {
     return {
         account: {
             address: undefined,
-            balance: '0',
-            chainId: undefined,
-            network: undefined,
+            eduBalance: '0',
+            mUSDTBalance: '0',
         }
     }
 } 
@@ -26,9 +25,8 @@ export const initAccountStore = (): AccountState => {
 export const defaultAccountState: AccountState = {
     account: {
         address: undefined,
-        balance: '0',
-        chainId: undefined,
-        network: undefined,
+        eduBalance: '0',
+        mUSDTBalance: '0',
     }
 }
 

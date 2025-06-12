@@ -1,6 +1,10 @@
 export interface AccountType {
   address?: string;
-  balance?: string;
-  chainId?: string;
-  network?: string;
+  eduBalance?: string;
+  mUSDTBalance?: string;
+}
+
+export interface PriceType {
+  day: string;
+  price: number;
 }
