@@ -1,15 +1,8 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { ChevronRight } from "lucide-react";
 import { useAccountStore } from "@/providers/account-store-provider";
 import { useShallow } from "zustand/shallow";
 import FuncButton from "./button";
 import type { FuncButtonType } from "./utils";
-import Web3 from "web3";
-import {
-  lendingPlatformContractABI,
-  lendingPlatformContractAddr,
-} from "@/lib/web3";
 import { usePriceStore } from "@/providers/price-store-provider";
 
 export default function BalanceSection() {
@@ -26,36 +19,6 @@ export default function BalanceSection() {
   );
   const btnList: FuncButtonType[] = ["deposit", "borrow", "repay", "redeem"];
 
-  const liquidate = async () => {
-    try {
-      if (!window.ethereum) {
-        throw new Error(
-          "Ethereum provider not found. Please install MetaMask or another Ethereum wallet.",
-        );
-      }
-      const accounts = await window.ethereum.request({
-        method: "eth_requestAccounts",
-      });
-      const web3 = new Web3(window.ethereum);
-
-      const instance = new web3.eth.Contract(
-        lendingPlatformContractABI,
-        lendingPlatformContractAddr.address,
-      );
-      instance.methods
-        .liquidate(accounts[0])
-        .send({ from: accounts[0] })
-        .then((receipt) => {
-          console.log("Liquidation successful:", receipt);
-        })
-        .catch((error) => {
-          console.error("Liquidation failed:", error);
-        });
-    } catch (error) {
-      console.error("Error initializing Web3 or contract instance:", error);
-    }
-  };
-
   return (
     <section
       id="balance-section"
@@ -70,15 +33,6 @@ export default function BalanceSection() {
         {btnList.map((btn) => (
           <FuncButton key={btn} type={btn} />
         ))}
-        <div
-          id={`liquidate-button`}
-          className="flex flex-col items-center gap-2 cursor-pointer"
-        >
-          <Button size="icon" onClick={liquidate}>
-            <ChevronRight />
-          </Button>
-          <p>liquidate</p>
-        </div>
       </div>
     </section>
   );

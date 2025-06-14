@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "./ui/button";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import Link from "next/link";
 import { useAccountStore } from "@/providers/account-store-provider";
 import { useShallow } from "zustand/shallow";
@@ -33,32 +33,6 @@ export default function Header() {
       setPrice: state.setPrice,
     })),
   );
-
-  const getPrice = async () => {
-      try {
-        const web3 = new Web3(window.ethereum);
-        const priceOracleContractAddress = priceOracleContractAddr.address;
-        const instance = new web3.eth.Contract(
-          priceOracleContractABI,
-          priceOracleContractAddress,
-        );
-        const price = await instance.methods.getPrice().call();
-        return web3.utils.fromWei(String(price), "ether");
-      } catch (error) {
-        console.error("Error fetching initial price:", error);
-        return "0";
-      }
-    };
-  
-    useEffect(() => {
-      const fetchInitialData = async () => {
-        const initialPrice = await getPrice();
-        setPrice(initialPrice);
-        console.log("Initial price fetched:", initialPrice);
-      };
-  
-      fetchInitialData();
-    }, []);
 
   const _connectToMetaMask = useCallback(async () => {
     const ethereum = window.ethereum;
@@ -140,6 +114,36 @@ export default function Header() {
     }
   }, []);
 
+   const liquidate = async () => {
+    try {
+      if (!window.ethereum) {
+        throw new Error(
+          "Ethereum provider not found. Please install MetaMask or another Ethereum wallet.",
+        );
+      }
+      const accounts = await window.ethereum.request({
+        method: "eth_requestAccounts",
+      });
+      const web3 = new Web3(window.ethereum);
+
+      const instance = new web3.eth.Contract(
+        lendingPlatformContractABI,
+        lendingPlatformContractAddr.address,
+      );
+      instance.methods
+        .liquidate(accounts[0])
+        .send({ from: accounts[0] })
+        .then((receipt) => {
+          console.log("Liquidation successful:", receipt);
+        })
+        .catch((error) => {
+          console.error("Liquidation failed:", error);
+        });
+    } catch (error) {
+      console.error("Error initializing Web3 or contract instance:", error);
+    }
+  };
+
   return (
     <header className="sticky top-0 z-50 py-4 px-6 flex items-center justify-between bg-slate-200">
       <Link href="/">
@@ -150,11 +154,11 @@ export default function Header() {
         <DropdownMenuContent>
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
+          <DropdownMenuItem className="flex flex-col items-start">
             <Button onClick={_connectToMetaMask}>
               {!accountData?.address ? "Connect MetaMask" : "Connected"}
             </Button>
-            : {accountData?.address}
+            {accountData?.address}
           </DropdownMenuItem>
             <DropdownMenuItem>
                 已存入: {accountData?.eduBalance ?? "0"} EDU
@@ -165,6 +169,7 @@ export default function Header() {
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => window.location.replace('/overview')}>Overview</DropdownMenuItem>
           <DropdownMenuItem onClick={nextDay}>next day</DropdownMenuItem>
+          <DropdownMenuItem onClick={liquidate}>liquidation</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </header>
