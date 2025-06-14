@@ -167,7 +167,7 @@ export default function Header() {
                 已借出: {accountData?.mUSDTBalance ?? "0"} mUSDT
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => window.location.replace('/overview')}>Overview</DropdownMenuItem>
+            {/* <DropdownMenuItem onClick={() => window.location.replace('/overview')}>Overview</DropdownMenuItem> */}
           <DropdownMenuItem onClick={nextDay}>next day</DropdownMenuItem>
           <DropdownMenuItem onClick={liquidate}>liquidation</DropdownMenuItem>
         </DropdownMenuContent>
