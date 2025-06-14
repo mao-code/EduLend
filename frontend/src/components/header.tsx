@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "./ui/button";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import Link from "next/link";
 import { useAccountStore } from "@/providers/account-store-provider";
 import { useShallow } from "zustand/shallow";
@@ -19,6 +19,7 @@ import {
   priceOracleContractABI,
   priceOracleContractAddr,
 } from "@/lib/web3";
+import { usePriceStore } from "@/providers/price-store-provider";
 
 export default function Header() {
   const { accountData, setAccountData } = useAccountStore(
@@ -27,6 +28,37 @@ export default function Header() {
       setAccountData: state.setAccount,
     })),
   );
+  const { setPrice } = usePriceStore(
+    useShallow((state) => ({
+      setPrice: state.setPrice,
+    })),
+  );
+
+  const getPrice = async () => {
+      try {
+        const web3 = new Web3(window.ethereum);
+        const priceOracleContractAddress = priceOracleContractAddr.address;
+        const instance = new web3.eth.Contract(
+          priceOracleContractABI,
+          priceOracleContractAddress,
+        );
+        const price = await instance.methods.getPrice().call();
+        return web3.utils.fromWei(String(price), "ether");
+      } catch (error) {
+        console.error("Error fetching initial price:", error);
+        return "0";
+      }
+    };
+  
+    useEffect(() => {
+      const fetchInitialData = async () => {
+        const initialPrice = await getPrice();
+        setPrice(initialPrice);
+        console.log("Initial price fetched:", initialPrice);
+      };
+  
+      fetchInitialData();
+    }, []);
 
   const _connectToMetaMask = useCallback(async () => {
     const ethereum = window.ethereum;
@@ -86,6 +118,22 @@ export default function Header() {
       );
 
       await instance.methods.advance().send({from: accounts[0]});
+      instance.methods
+        .getPrice()
+        .call<string>()
+        .then((price) => {
+          const priceInEther = web3.utils.fromWei(price, "ether");
+          setPrice(priceInEther);
+          console.log("Next day price:", priceInEther);
+          alert(`Next day price: ${priceInEther} EDU`);
+        }
+        )
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .catch((error: any) => {
+          console.error("Error fetching next day price:", error);
+          alert(`Error fetching next day price: ${error?.message ?? error}`);
+        }
+      );
     }
     catch (error) {
       console.error("Error fetching next day price:", error);
