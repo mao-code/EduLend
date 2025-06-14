@@ -26,7 +26,7 @@ export default function BalanceSection() {
     >
       <div className="flex flex-col items-end gap-2">
         <h1 className="text-4xl font-bold">已存入: {eduBalance || 0} EDU</h1>
-        <h1>当前利率: {prices[prices.length - 1]}%</h1>
+        <h1 className="text-zinc-500">當前利率: {prices[prices.length - 1]}%</h1>
         {/* <span className="text-zinc-500 font-bold">{mUSDTBalance || 0} mUSDT</span> */}
       </div>
       <div className="flex gap-8">

@@ -145,7 +145,7 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 py-4 px-6 flex items-center justify-between bg-slate-200">
+    <header className="sticky top-0 z-50 py-4 px-6 flex items-center justify-between bg-zinc-200">
       <Link href="/">
         <h1 className="text-2xl font-bold">EduLend</h1>
       </Link>

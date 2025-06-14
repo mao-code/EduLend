@@ -133,7 +133,7 @@ export default function FuncButton({ type }: FuncButtonProps) {
             id={`${type}-button`}
             className="flex flex-col items-center gap-2 cursor-pointer"
           >
-            <div className="flex items-center justify-center w-12 h-12 bg-slate-300 rounded-full">
+            <div className="flex items-center justify-center w-12 h-12 bg-zinc-300 rounded-full">
               <ChevronRight className="w-6 h-6" />
             </div>
             <p>{type}</p>
