@@ -5,6 +5,7 @@ import 'driver.js/dist/driver.css';
 
 import Header from "@/components/header";
 import { AccountStoreProvider } from "@/providers/account-store-provider";
+import { PriceStoreProvider } from "@/providers/price-store-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,10 +32,12 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased h-screen flex flex-col`}
       >
-        <AccountStoreProvider>
-          <Header />
-          <main className="flex-1">{children}</main>
-        </AccountStoreProvider>
+        <PriceStoreProvider>
+          <AccountStoreProvider>
+            <Header />
+            <main className="flex-1">{children}</main>
+          </AccountStoreProvider>
+        </PriceStoreProvider>
       </body>
     </html>
   );
