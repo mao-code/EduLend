@@ -22,12 +22,12 @@ export default function BalanceSection() {
   return (
     <section
       id="balance-section"
-      className="flex flex-col grow gap-12 w-full items-center justify-center"
+      className="flex flex-col grow gap-12 my-12 w-full items-center justify-center"
     >
       <div className="flex flex-col items-end gap-2">
         <h1 className="text-4xl font-bold">已存入: {eduBalance || 0} EDU</h1>
-        <h1 className="text-zinc-500">當前利率: {prices[prices.length - 1]}%</h1>
-        {/* <span className="text-zinc-500 font-bold">{mUSDTBalance || 0} mUSDT</span> */}
+        <h1 className="text-zinc-1000">當前利率: {prices[prices.length - 1]}%</h1>
+        {/* <span className="text-zinc-1000 font-bold">{mUSDTBalance || 0} mUSDT</span> */}
       </div>
       <div className="flex gap-8">
         {btnList.map((btn) => (
