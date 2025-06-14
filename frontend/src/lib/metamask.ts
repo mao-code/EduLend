@@ -3,8 +3,3 @@ export interface AccountType {
   eduBalance?: string;
   mUSDTBalance?: string;
 }
-
-export interface PriceType {
-  day: string;
-  price: number;
-}
