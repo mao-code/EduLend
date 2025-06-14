@@ -26,6 +26,8 @@ export default function Header() {
                 const lendingPlatformContract = new web3.eth.Contract(lendingPlatformContractABI, lendingPlatformContractAddr.address);
                 // const eduTokenContract = new web3.eth.Contract(eduTokenContractABI, "0x5FbDB2315678afecb367f032d93F642f64180aa3");
 
+                console.log("lendingPlatformContract Addr: ", lendingPlatformContractAddr.address);
+
                 const address = accounts[0];
                 
                 // Update state with the results

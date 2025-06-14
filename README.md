@@ -61,12 +61,12 @@ forge script script/Deploy.s.sol:DeployScript \
   --rpc-url "http://localhost:8545" --private-key "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80" --broadcast -vv
 ```
 
-Outputs will be like:
-```
-Deployed EduToken      : 0x1...EDU
-Deployed MockStablecoin: 0x2...USD
-Deployed PriceOracle   : 0x3...ORC
-Deployed LendingPlatform : 0x4...LEN
-```
+## 6. Launch Frontend
+We sugget you to first login to MetaMask and import EDU and mUSDT token.
 
-Copy those addresses for your UI (frontend).
+```bash
+cd frontend 
+node go.mjs
+npm install
+npm run dev
+```
