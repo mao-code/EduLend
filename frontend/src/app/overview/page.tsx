@@ -8,12 +8,8 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { useState, useEffect } from "react";
-import Web3 from "web3";
-import {
-  priceOracleContractABI,
-  priceOracleContractAddr,
-} from "@/lib/web3";
+import { usePriceStore } from "@/providers/price-store-provider";
+import { useShallow } from "zustand/shallow";
 
 export default function OverviewPage() {
   const chartConfig = {
@@ -23,36 +19,16 @@ export default function OverviewPage() {
     },
   } satisfies ChartConfig;
 
-  const [data, setData] = useState<{ day: string; price: number }[]>([]);
-  const getPrice = async () => {
-    try {
-      const web3 = new Web3(window.ethereum);
-      const priceOracleContractAddress = priceOracleContractAddr.address;
-      const instance = new web3.eth.Contract(
-        priceOracleContractABI,
-        priceOracleContractAddress,
-      );
-      const price = await instance.methods.getPrice().call();
-      return parseFloat(web3.utils.fromWei(String(price), "ether"));
-    } catch (error) {
-      console.error("Error fetching initial price:", error);
-      return 0;
-    }
-  };
+  const { prices } = usePriceStore(
+    useShallow((state) => ({
+      prices: state.prices,
+    })),
+  );
 
-  useEffect(() => {
-    const fetchInitialData = async () => {
-      const initialPrice = await getPrice();
-      setData([
-        {
-          day: new Date().toLocaleDateString(),
-          price: initialPrice,
-        },
-      ]);
-    };
-
-    fetchInitialData();
-  }, []);
+  const data = prices.map((price, index) => ({
+    day: index + 1,
+    price,
+  }));
 
   return (
     <div className="flex flex-col size-full p-6 items-center justify-center">
