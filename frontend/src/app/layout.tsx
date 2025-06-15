@@ -4,6 +4,7 @@ import "./globals.css";
 import 'driver.js/dist/driver.css';
 
 import Header from "@/components/header";
+import { Toaster } from "@/components/ui/sonner";
 import { AccountStoreProvider } from "@/providers/account-store-provider";
 import { PriceStoreProvider } from "@/providers/price-store-provider";
 
@@ -36,6 +37,7 @@ export default function RootLayout({
           <AccountStoreProvider>
             <Header />
             <main className="flex-1">{children}</main>
+            <Toaster />
           </AccountStoreProvider>
         </PriceStoreProvider>
       </body>
