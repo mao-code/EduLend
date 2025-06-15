@@ -29,8 +29,8 @@ interface FuncButtonProps {
 }
 
 export default function FuncButton({ type }: FuncButtonProps) {
-  const { eduBalance } = useAccountStore(useShallow((state) => ({
-          eduBalance: state.account.eduBalance,
+  const { collateral } = useAccountStore(useShallow((state) => ({
+          collateral: state.account.collateral,
   })));
   const [amount, setAmount] = useState<string>("0");
 
@@ -143,7 +143,7 @@ export default function FuncButton({ type }: FuncButtonProps) {
           <DialogHeader>
             <DialogTitle>{type}</DialogTitle>
             <DialogDescription>
-              Enter the amount you want to {type} in the form below.<br />(balance: {eduBalance} EDU)
+              Enter the amount you want to {type} in the form below.<br />(balance: {collateral} EDU)
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-3">

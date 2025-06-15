@@ -6,10 +6,10 @@ import type { FuncButtonType } from "./utils";
 import { usePriceStore } from "@/providers/price-store-provider";
 
 export default function BalanceSection() {
-  const { eduBalance } = useAccountStore(
+  const { collateral, principal } = useAccountStore(
     useShallow((state) => ({
-      eduBalance: state.account.eduBalance,
-      // mUSDTBalance: state.account.mUSDTBalance,
+      collateral: state.account.collateral,
+      principal: state.account.principal,
     })),
   );
   const { prices } = usePriceStore(
@@ -24,10 +24,10 @@ export default function BalanceSection() {
       id="balance-section"
       className="flex flex-col grow gap-12 my-12 w-full items-center justify-center"
     >
-      <div className="flex flex-col items-end gap-2">
-        <h1 className="text-4xl font-bold">已存入: {eduBalance || 0} EDU</h1>
-        <h1 className="text-zinc-1000">當前利率: {prices[prices.length - 1]}%</h1>
-        {/* <span className="text-zinc-1000 font-bold">{mUSDTBalance || 0} mUSDT</span> */}
+      <div className="flex flex-col items-start gap-2">
+        <h1 className="text-4xl font-bold">已存入: {collateral || 0} EDU</h1>
+        <span className="text-4xl font-bold">已借出: {principal || 0} mUSDT</span>
+        <h1 className="text-zinc-500">當前利率: {prices[prices.length - 1]}%</h1>
       </div>
       <div className="flex gap-8">
         {btnList.map((btn) => (

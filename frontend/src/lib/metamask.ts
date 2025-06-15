@@ -1,5 +1,5 @@
 export interface AccountType {
   address?: string;
-  eduBalance?: string;
-  mUSDTBalance?: string;
+  collateral?: string;
+  principal?: string;
 }

@@ -16,8 +16,8 @@ export const initAccountStore = (): AccountState => {
     return {
         account: {
             address: undefined,
-            eduBalance: '0',
-            mUSDTBalance: '0',
+            collateral: '0',
+            principal: '0',
         }
     }
 } 
@@ -25,8 +25,8 @@ export const initAccountStore = (): AccountState => {
 export const defaultAccountState: AccountState = {
     account: {
         address: undefined,
-        eduBalance: '0',
-        mUSDTBalance: '0',
+        collateral: '0',
+        principal: '0',
     }
 }
 

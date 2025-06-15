@@ -60,13 +60,13 @@ export default function Header() {
         // Update state with the results
         setAccountData({
           address,
-          eduBalance: web3.utils.fromWei(
+          collateral: web3.utils.fromWei(
             await lendingPlatformContract.methods
               .collateral(accounts[0])
               .call(),
             "ether",
-          ), // Convert balance from wei to ether
-          // mUSDTBalance: web3.utils.fromWei(await eduTokenContract.methods.currentPriceInMusdt(accounts[0]).call(), "ether"), // Placeholder, update with actual logic if needed
+          ), 
+          principal: parseFloat(web3.utils.fromWei(await lendingPlatformContract.methods.principal(accounts[0]).call(), "ether")).toFixed(2),
         });
         console.log("connected to MetaMask with address: ", address);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -99,7 +99,6 @@ export default function Header() {
           const priceInEther = web3.utils.fromWei(price, "ether");
           setPrice(priceInEther);
           console.log("Next day price:", priceInEther);
-          alert(`Next day price: ${priceInEther} EDU`);
         }
         )
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -161,10 +160,10 @@ export default function Header() {
             {accountData?.address}
           </DropdownMenuItem>
             <DropdownMenuItem>
-                已存入: {accountData?.eduBalance ?? "0"} EDU
+                已存入: {accountData?.collateral ?? "0"} EDU
             </DropdownMenuItem>
             <DropdownMenuItem>
-                已借出: {accountData?.mUSDTBalance ?? "0"} mUSDT
+                已借出: {accountData?.principal ?? "0"} mUSDT
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             {/* <DropdownMenuItem onClick={() => window.location.replace('/overview')}>Overview</DropdownMenuItem> */}
