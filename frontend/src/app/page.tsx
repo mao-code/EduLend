@@ -1,6 +1,6 @@
 'use client'
 import BalanceSection from './balance/section';
-import OverviewPage from './overview/page';
+import OverviewSection from './overview/section';
 // import CurriculumSection from './curriculum/section';
 import { driver } from 'driver.js';
 import { useEffect } from 'react';
@@ -45,7 +45,7 @@ export default function Home() {
   return (
     <div className="flex flex-col h-full">
       <BalanceSection />
-      <OverviewPage />
+      <OverviewSection />
       {/* <CurriculumSection /> */}
     </div>
   );

@@ -11,10 +11,10 @@ import {
 import { usePriceStore } from "@/providers/price-store-provider";
 import { useShallow } from "zustand/shallow";
 
-export default function OverviewPage() {
+export default function OverviewSection() {
   const chartConfig = {
     price: {
-      label: "Price",
+      label: "Interest Rate",
       color: "#2563eb",
     },
   } satisfies ChartConfig;
