@@ -23,6 +23,7 @@ import {
 } from "@/lib/web3";
 import { useAccountStore } from "@/providers/account-store-provider";
 import { useShallow } from "zustand/shallow";
+import { toast } from "sonner";
 
 interface FuncButtonProps {
   type: FuncButtonType;
@@ -64,6 +65,7 @@ export default function FuncButton({ type }: FuncButtonProps) {
         })
         .catch((error) => {
           console.error("Approval failed:", error);
+          toast("Approval failed: " + error.message);
         });
 
       // Handle button click based on the type
@@ -79,6 +81,7 @@ export default function FuncButton({ type }: FuncButtonProps) {
             })
             .catch((error) => {
               console.error("Deposit failed:", error);
+              toast("Deposit failed: " + error.message);
             });
           break;
         case "borrow":
@@ -91,6 +94,7 @@ export default function FuncButton({ type }: FuncButtonProps) {
             })
             .catch((error) => {
               console.error("Borrow failed:", error);
+              toast("Borrow failed: " + error.message);
             });
           break;
         case "repay":
@@ -103,6 +107,7 @@ export default function FuncButton({ type }: FuncButtonProps) {
             })
             .catch((error) => {
               console.error("Repay failed:", error);
+              toast("Repay failed: " + error.message);
             });
           break;
         case "redeem":
@@ -115,6 +120,7 @@ export default function FuncButton({ type }: FuncButtonProps) {
             })
             .catch((error) => {
               console.error("Redeem failed:", error);
+              toast("Redeem failed: " + error.message);
             });
           break;
         default:
@@ -128,7 +134,7 @@ export default function FuncButton({ type }: FuncButtonProps) {
   return (
     <Dialog>
       <form>
-        <DialogTrigger asChild>
+        <DialogTrigger>
           <div
             id={`${type}-button`}
             className="flex flex-col items-center gap-2 cursor-pointer"

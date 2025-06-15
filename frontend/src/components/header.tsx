@@ -20,6 +20,7 @@ import {
   priceOracleContractAddr,
 } from "@/lib/web3";
 import { usePriceStore } from "@/providers/price-store-provider";
+import { toast } from "sonner";
 
 export default function Header() {
   const { accountData, setAccountData } = useAccountStore(
@@ -137,6 +138,7 @@ export default function Header() {
         })
         .catch((error) => {
           console.error("Liquidation failed:", error);
+          toast("Liquidation failed: " + error.message);
         });
     } catch (error) {
       console.error("Error initializing Web3 or contract instance:", error);
