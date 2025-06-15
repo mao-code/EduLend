@@ -29,10 +29,10 @@ export default function Home() {
           }
         },
         {
-          element: '#curriculum-section',
+          element: '#overview-section',
           popover: {
-            title: '課程模組',
-            description: '這裡是學習模組，你可以選擇不同課程。',
+            title: '利率曲線',
+            description: '這裡顯示了當前的利率曲線，幫助你了解市場動態。',
             side: 'left',
             align: 'start'
           }

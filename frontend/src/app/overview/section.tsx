@@ -31,7 +31,7 @@ export default function OverviewSection() {
   }));
 
   return (
-    <div className="flex flex-col size-full p-6 items-center justify-center bg-zinc-100">
+    <div id="overview-section" className="flex flex-col size-full p-6 items-center justify-center bg-zinc-100">
       <h1 className="text-2xl font-bold mb-4">Overview</h1>
       <ChartContainer
         config={chartConfig}
